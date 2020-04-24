@@ -28,8 +28,11 @@ let m_directives = {
 	},
 	"ng-submit": {
 		link: (scope, e, attrs) => {
-			const ret = scope[attrs["ng-submit"]];
-			attrs.$set("onsubmit", ret)
+			attrs.$set("onsubmit", (evt) => {
+				scope.$event = evt;
+				evt.preventDefault();
+				return eval_scoped(scope, attrs["ng-submit"]);
+			});
 		}
 	},
 	"ng-click": {
