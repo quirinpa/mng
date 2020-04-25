@@ -440,7 +440,7 @@ function mng_mount(element, defaultRoute, views) {
 			},
 		};
 
-		routes[key] = {
+		routes["/" + key] = {
 			onmatch: function (args, requestedPath, route) {
 				state.params = {
 					...state.params,
@@ -456,11 +456,15 @@ function mng_mount(element, defaultRoute, views) {
 		};
 	}
 
-	let droute = defaultRoute;
-	let idx = location.href.indexOf("#!");
-	let loc = location.href.substr(idx + 2);
-	idx = loc.indexOf("?");
-	droute = idx >= 0 ? loc.substr(0, idx) : loc;
+	let loc = location.href;
+	let idx = loc.indexOf("#");
+	let droute = defaultRoute.substr(1);
+	if (idx >= 0) {
+		loc = loc.substr(idx + 2);
+		idx = loc.indexOf("?");
+		if (idx >= 0)
+			droute = loc.substr(0, idx);
+	}
 	console.log("mng_mount", views, routes, droute, loc);
 	m.route(element, droute, routes);
 }
