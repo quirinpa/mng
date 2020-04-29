@@ -345,7 +345,7 @@ function mng_view_r(pscope, obj) {
 	};
 
 	let Res = {};
-	Res.oninit = Res.oncreate = function (vnode) {
+	Res.oninit = function (vnode) {
 		const directive = m_directives[obj.tag];
 		const dscope = directive && directive.scope || {};
 		attrs_parse(obj, scope, dscope);
@@ -359,8 +359,19 @@ function mng_view_r(pscope, obj) {
 			return;
 		}
 
-		directives_link(obj, scope, vnode);
 		scope.children = Array.from(obj.children);
+		directives_link(obj, scope, vnode);
+	};
+
+	Res.oncreate = function (vnode) {
+		directives_link(obj, scope, vnode);
+		if (!vnode.dom)
+			return;
+		vnode.dom.onscroll = (e) => {
+			obj.scroll = e.target.scrollTop;
+			return false;
+		};
+		vnode.dom.scrollTop = obj.scroll;
 	};
 
 	Res.view = function (vnode) {
